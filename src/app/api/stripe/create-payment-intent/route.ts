@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { PrismaClient } from '@prisma/client';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2023-08-16',
+  apiVersion: '2024-06-20',
 });
 
 const prisma = new PrismaClient();
@@ -46,8 +46,9 @@ export async function POST(req: NextRequest) {
           online: {
             ip_address:
               req.headers.get('x-forwarded-for') ||
-              req.headers.get('remote-addr'),
-            user_agent: req.headers.get('user-agent'),
+              req.headers.get('remote-addr') ||
+              '',
+            user_agent: req.headers.get('user-agent') || '',
           },
         },
       },

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 export const Hero = () => {
   return (
@@ -24,7 +25,13 @@ export const Hero = () => {
           </div>
         </div>
         <div className="w-1/2  justify-center hidden lg:flex max-w-[600px]">
-          <img src="/images/airplane.svg" alt="" />
+          <Image
+            src="/images/airplane.svg"
+            alt="Airplane"
+            width={100}
+            height={100}
+            layout="responsive"
+          />
         </div>
       </div>
     </div>

@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error(
       'Error placing order:',
-      error.response?.data || error.message
+      (error as any).response?.data || (error as any).message
     );
     return NextResponse.json(
       { error: 'Failed to place order' },
