@@ -29,6 +29,20 @@ model User {
 
   stripeCustomerId String? // Store Stripe customer ID
   stripePaymentMethodId String?
+}
 
+model Merchant {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  password String
+  name  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  plaidAccessToken   String?  @db.Text // Storing the access token securely
+  plaidItemId        String?  @unique  // The Plaid item ID associated with this access token
+  plaidInstitutionId String?  @db.Text // Optional: The institution ID from Plaid
+
+  stripeCustomerId String? // Store Stripe customer ID
+  stripePaymentMethodId String?
 }

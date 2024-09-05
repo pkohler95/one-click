@@ -32,7 +32,7 @@ const FormSchema = z
     message: 'Password do not match',
   });
 
-const SignUpForm = () => {
+const MerchantSignUpForm = () => {
   const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -45,7 +45,7 @@ const SignUpForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
-    const response = await fetch('/api/user', {
+    const response = await fetch('/api/signup/merchant', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ const SignUpForm = () => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Merchant Name</FormLabel>
                 <FormControl>
                   <Input placeholder="johndoe" {...field} />
                 </FormControl>
@@ -147,4 +147,4 @@ const SignUpForm = () => {
   );
 };
 
-export default SignUpForm;
+export default MerchantSignUpForm;
