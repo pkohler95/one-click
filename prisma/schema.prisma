@@ -20,29 +20,26 @@ model User {
   email String  @unique
   password String
   name  String?
+  userType String // Can be 'customer' or 'merchant'
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  plaidAccessToken   String?  @db.Text // Storing the access token securely
-  plaidItemId        String?  @unique  // The Plaid item ID associated with this access token
-  plaidInstitutionId String?  @db.Text // Optional: The institution ID from Plaid
-
   stripeCustomerId String? // Store Stripe customer ID
   stripePaymentMethodId String?
+
+  customer  Customer?
+  merchant  Merchant?
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Customer-specific fields
 }
 
 model Merchant {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  password String
-  name  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  plaidAccessToken   String?  @db.Text // Storing the access token securely
-  plaidItemId        String?  @unique  // The Plaid item ID associated with this access token
-  plaidInstitutionId String?  @db.Text // Optional: The institution ID from Plaid
-
-  stripeCustomerId String? // Store Stripe customer ID
-  stripePaymentMethodId String?
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Merchant-specific fields
 }

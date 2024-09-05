@@ -4,8 +4,7 @@ import SignUpForm from '@/components/auth/SignUpForm';
 const page = () => {
   return (
     <div className="w-full">
-      {/* <SignUpForm /> */}
-      <SignUpFlow />
+      <SignUpForm />
     </div>
   );
 };

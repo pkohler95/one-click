@@ -16,7 +16,10 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import GoogleSignInButton from '../GoogleSignInButton';
 import { useRouter } from 'next/navigation';
+import RadioGroup from '../ui/RadioGroup';
+import RadioGroupItem from '../ui/RadioGroupItem';
 
+// Update schema to use userType instead of role
 const FormSchema = z
   .object({
     name: z.string().min(1, 'Name is required').max(100),
@@ -24,15 +27,16 @@ const FormSchema = z
     password: z
       .string()
       .min(1, 'Password is required')
-      .min(8, 'Password must have than 8 characters'),
+      .min(8, 'Password must have more than 8 characters'),
     confirmPassword: z.string().min(1, 'Password confirmation is required'),
+    userType: z.enum(['customer', 'merchant'], 'User type is required'), // Updated to userType
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
-    message: 'Password do not match',
+    message: 'Passwords do not match',
   });
 
-const CustomerSignUpForm = () => {
+const SignUpForm = () => {
   const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -41,6 +45,7 @@ const CustomerSignUpForm = () => {
       email: '',
       password: '',
       confirmPassword: '',
+      userType: 'customer', // Default user type is customer
     },
   });
 
@@ -54,6 +59,7 @@ const CustomerSignUpForm = () => {
         name: values.name,
         email: values.email,
         password: values.password,
+        userType: values.userType, // Use userType in the submission
       }),
     });
 
@@ -128,6 +134,27 @@ const CustomerSignUpForm = () => {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="userType" // Update to userType
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Select User Type</FormLabel>
+                <FormControl>
+                  <select
+                    {...field}
+                    className="w-full p-2 border border-gray-300 rounded-lg"
+                  >
+                    <option value="">Select user type</option>{' '}
+                    {/* Default placeholder */}
+                    <option value="customer">Customer</option>
+                    <option value="merchant">Merchant</option>
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <Button className="w-full mt-6" type="submit">
           Sign up
@@ -138,7 +165,7 @@ const CustomerSignUpForm = () => {
       </div>
       <GoogleSignInButton>Sign up with Google</GoogleSignInButton>
       <p className="text-center text-sm text-gray-600 mt-2">
-        If you don&apos;t have an account, please&nbsp;
+        Already have an account?&nbsp;
         <Link className="text-blue-500 hover:underline" href="/sign-in">
           Sign in
         </Link>
@@ -147,4 +174,4 @@ const CustomerSignUpForm = () => {
   );
 };
 
-export default CustomerSignUpForm;
+export default SignUpForm;
