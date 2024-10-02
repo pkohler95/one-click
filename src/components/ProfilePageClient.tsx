@@ -11,6 +11,7 @@ const ProfilePageClient = ({ session }: { session: any }) => {
   const [paymentMethodId, setPaymentMethodId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  console.log(session);
   useEffect(() => {
     const fetchPaymentMethodId = async () => {
       if (!session?.user?.email) return;
@@ -53,6 +54,7 @@ const ProfilePageClient = ({ session }: { session: any }) => {
           <UserProfile
             name={session?.user?.name || ''}
             email={session?.user?.email || ''}
+            userType={session?.user?.userType || ''}
           />
         </div>
 

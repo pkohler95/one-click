@@ -13,12 +13,7 @@ export const authOptions: NextAuthOptions = {
   pages: { signIn: '/sign-in' },
   providers: [
     CredentialsProvider({
-      // The name to display on the sign in form (e.g. "Sign in with...")
       name: 'Credentials',
-      // `credentials` is used to generate a form on the sign in page.
-      // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-      // e.g. domain, username, password, 2FA token, etc.
-      // You can pass any HTML attribute to the <input> tag through the object.
       credentials: {
         email: {
           label: 'Email',
@@ -28,15 +23,11 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-
         const existingUser = await db.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
+          where: { email: credentials?.email },
         });
+
+        console.log(existingUser); // Check if userType exists in the user object
 
         if (!existingUser) {
           return null;
@@ -51,33 +42,35 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        // Ensure that name is always a string (fallback to empty string if null)
         return {
           id: `${existingUser.id}`,
-          name: existingUser.name,
+          name: existingUser.name || '', // Provide a fallback for name if null
           email: existingUser.email,
+          userType: existingUser.userType, // Ensure userType is included
         };
       },
     }),
   ],
   callbacks: {
+    // JWT callback to include all relevant user data in the token
     async jwt({ token, user }) {
-      // Persist the OAuth access_token and or the user id to the token right after signin
       if (user) {
-        return {
-          ...token,
-          name: user.name,
-        };
+        token.id = user.id;
+        token.name = user.name;
+        token.email = user.email;
+        token.userType = user.userType; // Add userType to the token
       }
+      // console.log(token); // Log the token for debugging purposes
       return token;
     },
+    // Session callback to include userType and other data in the session
     async session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          name: token.name,
-        },
-      };
+      session.user.id = token.id; // Make sure to include id
+      session.user.name = token.name;
+      session.user.email = token.email;
+      session.user.userType = token.userType; // Add userType to the session
+      return session;
     },
   },
 };
