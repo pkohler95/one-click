@@ -11,7 +11,7 @@ const userSchema = z.object({
     .string()
     .min(1, 'Password is required')
     .min(8, 'Password must have minimum of 8 characters'),
-  userType: z.enum(['customer', 'merchant'], 'User type is required'), // Add userType to the schema
+  userType: z.enum(['customer', 'merchant']),
 });
 
 export async function POST(req: Request) {

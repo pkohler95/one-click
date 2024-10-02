@@ -16,8 +16,6 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import GoogleSignInButton from '../GoogleSignInButton';
 import { useRouter } from 'next/navigation';
-import RadioGroup from '../ui/RadioGroup';
-import RadioGroupItem from '../ui/RadioGroupItem';
 
 // Update schema to use userType instead of role
 const FormSchema = z
@@ -29,7 +27,7 @@ const FormSchema = z
       .min(1, 'Password is required')
       .min(8, 'Password must have more than 8 characters'),
     confirmPassword: z.string().min(1, 'Password confirmation is required'),
-    userType: z.enum(['customer', 'merchant'], 'User type is required'), // Updated to userType
+    userType: z.enum(['customer', 'merchant']), // Updated to userType
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],

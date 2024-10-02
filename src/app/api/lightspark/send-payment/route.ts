@@ -30,6 +30,13 @@ export async function GET() {
     return NextResponse.json({ payInvoice });
   } catch (error) {
     console.error('Error sending payment:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(
+      { error: 'An unknown error occurred' },
+      { status: 500 }
+    );
   }
 }

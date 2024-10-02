@@ -27,10 +27,12 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials?.email },
         });
 
-        console.log(existingUser); // Check if userType exists in the user object
-
         if (!existingUser) {
           return null;
+        }
+
+        if (!credentials || !credentials.password) {
+          throw new Error('Credentials are missing');
         }
 
         const passwordMatch = await compare(

@@ -10,6 +10,14 @@ export async function GET() {
     return NextResponse.json({ fundingAddress });
   } catch (error) {
     console.error('Error creating address:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(
+      { error: 'An unknown error occurred' },
+      { status: 500 }
+    );
   }
 }
