@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import UserProfile from '../components/UserProfile';
-import { Navbar } from '@/components/Navbar';
+import { Navbar } from '@/components/shared/Navbar';
 import ACHSetupForm from './stripe/ACHSetupForm';
 import PaymentButton from '../components/stripe/PaymentButton';
 import PlaceOrderButton from './coinbase/PlaceOrderButton';

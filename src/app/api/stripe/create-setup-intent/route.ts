@@ -10,30 +10,51 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
+    const { userId } = await req.json();
 
-    // Find user in the database by email
-    let user = await prisma.user.findUnique({
-      where: { email },
+    // Convert userId to an integer if it's a string
+    const numericUserId = parseInt(userId, 10);
+
+    // Check if conversion was successful
+    if (isNaN(numericUserId)) {
+      return NextResponse.json(
+        { error: 'Invalid userId. Expected an integer.' },
+        { status: 400 }
+      );
+    }
+
+    // Find customer in the database by userId and include related User data
+    const customerRecord = await prisma.customer.findUnique({
+      where: { userId: numericUserId },
+      include: { user: true }, // Include related user data (e.g., email)
     });
+
+    if (!customerRecord) {
+      // If the customer does not exist in the Customer table, return an error
+      return NextResponse.json(
+        { error: 'Customer not found' },
+        { status: 404 }
+      );
+    }
 
     let customer;
 
-    if (user && user.stripeCustomerId) {
-      // If the user already has a Stripe customer ID, retrieve the customer from Stripe
-      customer = await stripe.customers.retrieve(user.stripeCustomerId);
-    } else if (user) {
-      // If the user exists but does not have a Stripe customer ID, create a new customer
-      customer = await stripe.customers.create({ email });
+    if (customerRecord.stripeCustomerId) {
+      // If the customer already has a Stripe customer ID, retrieve the customer from Stripe
+      customer = await stripe.customers.retrieve(
+        customerRecord.stripeCustomerId
+      );
+    } else {
+      // If the customer exists but does not have a Stripe customer ID, create a new customer in Stripe
+      customer = await stripe.customers.create({
+        email: customerRecord.user.email, // Now we can access user.email
+      });
 
-      // Update the existing user with the Stripe customer ID
-      user = await prisma.user.update({
-        where: { email },
+      // Update the existing customer record with the Stripe customer ID
+      await prisma.customer.update({
+        where: { userId: numericUserId },
         data: { stripeCustomerId: customer.id },
       });
-    } else {
-      // If the user does not exist, return an error
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Create a SetupIntent to collect ACH payment details

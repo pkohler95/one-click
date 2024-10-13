@@ -19,12 +19,13 @@
 }
 
 body {
-  background: linear-gradient(
+  /* background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
-    rgb(var(--background-start-rgb));
+    rgb(var(--background-start-rgb)); */
+  @apply bg-[#FFF1E5];
 }
 
 @layer utilities {

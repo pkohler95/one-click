@@ -1,6 +1,6 @@
 import React from 'react';
 import { Hero } from './Hero';
-import { Navbar } from './Navbar';
+import { Navbar } from './shared/Navbar';
 
 export const LandingPage = () => {
   return (

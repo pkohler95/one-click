@@ -20,7 +20,6 @@ import { useRouter } from 'next/navigation';
 // Update schema to use userType instead of role
 const FormSchema = z
   .object({
-    name: z.string().min(1, 'Name is required').max(100),
     email: z.string().min(1, 'Email is required').email('Invalid email'),
     password: z
       .string()
@@ -39,7 +38,6 @@ const SignUpForm = () => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -54,7 +52,6 @@ const SignUpForm = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name: values.name,
         email: values.email,
         password: values.password,
         userType: values.userType, // Use userType in the submission
@@ -72,19 +69,6 @@ const SignUpForm = () => {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
         <div className="space-y-2">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="johndoe" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
           <FormField
             control={form.control}
             name="email"

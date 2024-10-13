@@ -5,7 +5,6 @@ import * as z from 'zod';
 
 // Updated userSchema to include userType
 const userSchema = z.object({
-  name: z.string(),
   email: z.string().min(1, 'Email is required').email('Invalid email'),
   password: z
     .string()
@@ -19,7 +18,7 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Validate request body
-    const { name, email, password, userType } = userSchema.parse(body);
+    const { email, password, userType } = userSchema.parse(body);
 
     // Check if email already exists in User table
     const existingUserByEmail = await prisma.user.findUnique({
@@ -43,7 +42,7 @@ export async function POST(req: Request) {
 
     // Create a new user in the User table
     const newUser = await prisma.user.create({
-      data: { name, email, password: hashedPassword, userType: userType },
+      data: { email, password: hashedPassword, userType: userType },
     });
 
     // Depending on userType, create a record in either the Customer or Merchant table
