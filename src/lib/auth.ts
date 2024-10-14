@@ -44,10 +44,9 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        // Ensure that name is always a string (fallback to empty string if null)
+        // Return the relevant user information
         return {
           id: `${existingUser.id}`,
-          name: existingUser.name || '', // Provide a fallback for name if null
           email: existingUser.email,
           userType: existingUser.userType, // Ensure userType is included
         };
@@ -59,17 +58,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.name = user.name;
         token.email = user.email;
         token.userType = user.userType; // Add userType to the token
       }
-      // console.log(token); // Log the token for debugging purposes
       return token;
     },
     // Session callback to include userType and other data in the session
     async session({ session, token }) {
       session.user.id = token.id; // Make sure to include id
-      session.user.name = token.name;
       session.user.email = token.email;
       session.user.userType = token.userType; // Add userType to the session
       return session;
