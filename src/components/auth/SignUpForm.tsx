@@ -18,20 +18,14 @@ import GoogleSignInButton from '../GoogleSignInButton';
 import { useRouter } from 'next/navigation';
 
 // Update schema to use userType instead of role
-const FormSchema = z
-  .object({
-    email: z.string().min(1, 'Email is required').email('Invalid email'),
-    password: z
-      .string()
-      .min(1, 'Password is required')
-      .min(8, 'Password must have more than 8 characters'),
-    confirmPassword: z.string().min(1, 'Password confirmation is required'),
-    userType: z.enum(['customer', 'merchant']), // Updated to userType
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ['confirmPassword'],
-    message: 'Passwords do not match',
-  });
+const FormSchema = z.object({
+  email: z.string().min(1, 'Email is required').email('Invalid email'),
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .min(8, 'Password must have more than 8 characters'),
+  userType: z.enum(['customer', 'merchant']), // Updated to userType
+});
 
 const SignUpForm = () => {
   const router = useRouter();
@@ -40,7 +34,6 @@ const SignUpForm = () => {
     defaultValues: {
       email: '',
       password: '',
-      confirmPassword: '',
       userType: 'customer', // Default user type is customer
     },
   });
@@ -99,7 +92,7 @@ const SignUpForm = () => {
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="confirmPassword"
             render={({ field }) => (
@@ -115,7 +108,7 @@ const SignUpForm = () => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <FormField
             control={form.control}
             name="userType" // Update to userType
