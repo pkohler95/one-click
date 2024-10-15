@@ -21,7 +21,11 @@ const AddFundsModal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAmount(Number(e.target.value));
+    const inputValue = e.target.value;
+
+    const formattedValue = inputValue === '' ? 0 : Number(inputValue);
+
+    setAmount(formattedValue);
   };
 
   const handlePayment = async () => {
