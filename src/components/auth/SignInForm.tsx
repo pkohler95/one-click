@@ -18,6 +18,7 @@ import GoogleSignInButton from '../GoogleSignInButton';
 import { sign } from 'crypto';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { getSession } from 'next-auth/react';
 
 const FormSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email'),
@@ -43,11 +44,21 @@ const SignInForm = () => {
       password: values.password,
       redirect: false,
     });
+
     if (signInData?.error) {
       console.error(signInData.error);
     } else {
       console.log('Signed in');
-      router.push('/customer-profile');
+      // Fetch the session to access the userType field
+      const session = await getSession(); // You can use next-auth's getSession or a similar method
+
+      if (session?.user?.userType === 'merchant') {
+        router.push('/merchant-profile');
+      } else if (session?.user?.userType === 'customer') {
+        router.push('/customer-profile');
+      } else {
+        console.error('Unknown user type');
+      }
     }
   };
 
