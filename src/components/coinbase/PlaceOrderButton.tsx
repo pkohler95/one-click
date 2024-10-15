@@ -3,7 +3,7 @@
 import React from 'react';
 
 export default function PlaceOrderButton() {
-  const handlePlaceOrder = async () => {
+  const handlePlaceCoinbaseOrder = async () => {
     try {
       const response = await fetch('/api/coinbase/sandbox/order', {
         method: 'POST',
@@ -21,5 +21,5 @@ export default function PlaceOrderButton() {
     }
   };
 
-  return <button onClick={handlePlaceOrder}>Place Order</button>;
+  return <button onClick={handlePlaceCoinbaseOrder}>Place Order</button>;
 }

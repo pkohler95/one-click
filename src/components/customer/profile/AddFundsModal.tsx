@@ -14,23 +14,25 @@ const AddFundsModal: React.FC<ModalProps> = ({
   userId,
   onFundsAdded,
 }) => {
-  const [amount, setAmount] = useState<number>(0);
+  const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
 
-    const formattedValue = inputValue === '' ? 0 : Number(inputValue);
-
-    setAmount(formattedValue);
+    // Allow empty input or numbers only (use regex to validate)
+    if (value === '' || /^[0-9\b]+$/.test(value)) {
+      setInputValue(value);
+    }
   };
 
   const handlePayment = async () => {
     setLoading(true);
     setMessage(null);
+    const amount = Number(inputValue);
 
     try {
       const response = await fetch('/api/stripe/create-payment-intent', {
@@ -72,8 +74,8 @@ const AddFundsModal: React.FC<ModalProps> = ({
           <input
             type="number"
             id="amount"
-            value={amount}
-            onChange={handleAmountChange}
+            value={inputValue}
+            onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded"
             placeholder="Enter amount"
           />
@@ -84,7 +86,7 @@ const AddFundsModal: React.FC<ModalProps> = ({
             text={loading ? 'Processing...' : 'Add funds'}
             variant="primary"
             onClick={handlePayment}
-            disabled={loading || amount <= 0} // Disable if loading or no valid amount
+            disabled={loading || Number(inputValue) <= 0} // Disable if loading or no valid amount
           />
         </div>
 
