@@ -15,9 +15,9 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import Link from 'next/link';
 import GoogleSignInButton from '../GoogleSignInButton';
+import { signIn } from 'next-auth/react'; // Import signIn
 import { useRouter } from 'next/navigation';
 
-// Update schema to use userType instead of role
 const FormSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email'),
   password: z
@@ -39,6 +39,7 @@ const SignUpForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof FormSchema>) => {
+    // Sign up the user
     const response = await fetch('/api/signup/user', {
       method: 'POST',
       headers: {
@@ -52,7 +53,23 @@ const SignUpForm = () => {
     });
 
     if (response.ok) {
-      router.push('/sign-in');
+      // Automatically sign in the user after successful sign-up
+      const signInResponse = await signIn('credentials', {
+        email: values.email,
+        password: values.password,
+        redirect: false, // Don't redirect automatically
+      });
+
+      if (signInResponse?.error) {
+        console.error('Error signing in after sign-up:', signInResponse.error);
+      } else {
+        // Redirect based on userType
+        if (values.userType === 'merchant') {
+          router.push('/merchant-profile');
+        } else {
+          router.push('/customer-profile');
+        }
+      }
     } else {
       console.error('Failed to sign up');
     }
@@ -92,23 +109,7 @@ const SignUpForm = () => {
               </FormItem>
             )}
           />
-          {/* <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Re-Enter your password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Re-Enter your password"
-                    type="password"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
+
           <FormField
             control={form.control}
             name="userType" // Update to userType
