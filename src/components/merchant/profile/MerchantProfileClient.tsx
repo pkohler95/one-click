@@ -10,6 +10,7 @@ interface Merchant {
   storeName?: string;
   lnurl?: string;
   connectedAccountId?: string;
+  oneClickDiscount?: number;
 }
 
 const MerchantProfileClient = ({ session }: { session: any }) => {
@@ -94,6 +95,7 @@ const MerchantProfileClient = ({ session }: { session: any }) => {
                 <MerchantForm
                   storeName={merchant.storeName || ''}
                   lnurl={merchant.lnurl || ''}
+                  oneClickDiscount={merchant.oneClickDiscount || 2}
                   onFormChange={setProfileData} // Update profile data in parent
                 />
 

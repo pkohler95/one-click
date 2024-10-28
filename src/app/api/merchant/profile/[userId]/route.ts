@@ -45,13 +45,14 @@ export async function PUT(
   }
 
   try {
-    const { storeName, lnurl } = await req.json();
+    const { storeName, lnurl, oneClickDiscount } = await req.json();
 
     const updatedMerchant = await prisma.merchant.update({
       where: { userId },
       data: {
         storeName,
         lnurl,
+        oneClickDiscount,
       },
     });
 
