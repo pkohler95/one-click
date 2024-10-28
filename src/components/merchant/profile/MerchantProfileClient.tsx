@@ -9,22 +9,35 @@ import MerchantForm from './MerchantForm';
 interface Merchant {
   storeName?: string;
   lnurl?: string;
+  connectedAccountId?: string;
 }
 
 const MerchantProfileClient = ({ session }: { session: any }) => {
   const [merchant, setMerchant] = useState<Merchant | null>(null); // State for merchant data
   const [profileData, setProfileData] = useState<Merchant | null>(null); // State for local profile data
   const [error, setError] = useState<string | null>(null); // Error state
+  const [accountLink, setAccountLink] = useState<string | null>(null); // State for Stripe account link
 
   useEffect(() => {
-    // Function to fetch merchant data
+    // Function to fetch merchant data and get onboarding/dashboard link if needed
     const fetchMerchant = async () => {
       if (session?.user?.id) {
         try {
+          // Fetch merchant data
           const response = await axios.get(
             `/api/merchant/profile/${session.user.id}`
           );
-          setMerchant(response.data); // Set the merchant data from the response
+          const merchantData = response.data;
+          setMerchant(merchantData);
+
+          // Request an onboarding or dashboard link
+          const linkResponse = await axios.post(
+            '/api/stripe/onboard-merchant',
+            {
+              connectedAccountId: merchantData.connectedAccountId,
+            }
+          );
+          setAccountLink(linkResponse.data.url);
         } catch (error: any) {
           setError(
             error.response?.data?.error || 'Failed to fetch merchant profile'
@@ -86,12 +99,25 @@ const MerchantProfileClient = ({ session }: { session: any }) => {
 
                 {/* Centralized Save Button */}
                 <div className="flex justify-center mt-4">
-                  <Button
-                    text="Save"
-                    variant="primary"
-                    onClick={saveProfile} // Trigger profile saving
-                  />
+                  <Button text="Save" variant="primary" onClick={saveProfile} />
                 </div>
+              </div>
+
+              {/* Right section - Hosted Onboarding/Dashboard Link */}
+              <div className="mt-12">
+                {accountLink ? (
+                  <Button
+                    text={
+                      merchant.connectedAccountId
+                        ? 'Go to Stripe Dashboard'
+                        : 'Start Onboarding'
+                    }
+                    variant="primary"
+                    onClick={() => window.open(accountLink, '_blank')}
+                  />
+                ) : (
+                  <p>Loading link...</p>
+                )}
               </div>
             </div>
           </div>

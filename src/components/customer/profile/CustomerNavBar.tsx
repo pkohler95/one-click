@@ -30,11 +30,6 @@ export const CustomerNavBar: React.FC<CustomerNavBarProps> = ({
     <div className="flex justify-between pt-5">
       <button className="py-2 text-3xl font-bold text-black">OneClick</button>
       <div className="flex text-sm justify-center items-center">
-        {session?.user && (
-          <div className="mr-4 text-black">
-            Balance: ${balance.toFixed(2)} {/* Safe to display */}
-          </div>
-        )}
         {session?.user ? (
           <button
             onClick={() =>

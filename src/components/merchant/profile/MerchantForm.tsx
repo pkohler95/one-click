@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import Input from '@/components/shared/Input';
+import Tooltip from '@/components/shared/Tooltip';
 
 interface MerchantFormProps {
   storeName: string;
   lnurl: string;
+  oneClickDiscount: number;
   onFormChange: (profileData: any) => void; // Prop to send data to parent
 }
 
 const MerchantForm: React.FC<MerchantFormProps> = ({
   storeName,
   lnurl,
+  oneClickDiscount,
   onFormChange,
 }) => {
   const [formData, setFormData] = useState({
     storeName,
     lnurl,
+    oneClickDiscount,
   });
 
   useEffect(() => {
@@ -43,6 +47,17 @@ const MerchantForm: React.FC<MerchantFormProps> = ({
           placeholder="Enter lnurl"
           onChange={handleChange}
         />
+
+        {/* Tooltip wrapped around the OneClick discount label */}
+        <Tooltip text="The discount your customers receive when they checkout with OneClick. 2% recommended in order to be competitive with credit card rewards">
+          <Input
+            label="OneClick discount percentage"
+            name="oneClickDiscount"
+            value={formData.oneClickDiscount}
+            placeholder="Enter OneClick discount"
+            onChange={handleChange}
+          />
+        </Tooltip>
       </div>
     </div>
   );

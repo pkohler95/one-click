@@ -46,11 +46,14 @@ model Customer {
 }
 
 model Merchant {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  storeName String?
-  lnurl     String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                 Int      @id @default(autoincrement())
+  userId             Int      @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storeName          String?
+  lnurl              String?
+  connectedAccountId String?
+  oneClickDiscount   Int      @default(2) // New field with default value
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
+

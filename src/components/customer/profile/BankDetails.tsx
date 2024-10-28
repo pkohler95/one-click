@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import Button from '@/components/shared/Button';
-import AddFundsModal from './AddFundsModal';
 
 interface BankDetailsProps {
   bankName: string;
@@ -44,23 +42,6 @@ const BankDetails: React.FC<BankDetailsProps> = ({
         </div>
         <div className="text-xl font-semibold text-gray-800">*{last4}</div>
       </div>
-
-      {/* Primary Button */}
-      <div className="mt-4 w-full">
-        <Button
-          text="Add funds"
-          variant="primary"
-          onClick={openModal} // Open the modal when clicked
-        />
-      </div>
-
-      {/* Modal for adding funds */}
-      <AddFundsModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        userId={userId}
-        onFundsAdded={handleFundsAdded} // Handle funds added and trigger balance update
-      />
     </div>
   );
 };
