@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Navbar } from '@/components/shared/Navbar';
 import Button from '@/components/shared/Button';
 import MerchantForm from './MerchantForm';
+import MerchantTransactionsTable from './MerchantTransactionsTable';
 
 interface Merchant {
   storeName?: string;
@@ -120,6 +121,13 @@ const MerchantProfileClient = ({ session }: { session: any }) => {
                 ) : (
                   <p>Loading link...</p>
                 )}
+
+                <div className="pt-10">
+                  <h1 className="text-3xl font-bold mb-6 mt-12">
+                    Transactions
+                  </h1>
+                  <MerchantTransactionsTable merchantId={session?.user?.id} />
+                </div>
               </div>
             </div>
           </div>

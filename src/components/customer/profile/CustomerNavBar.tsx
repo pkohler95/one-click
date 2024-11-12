@@ -7,13 +7,10 @@ import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
 
 interface CustomerNavBarProps {
-  balance?: number; // Accept balance as a prop
+  email: string;
 }
 
-export const CustomerNavBar: React.FC<CustomerNavBarProps> = ({
-  balance = 0,
-}) => {
-  // Default value for balance
+export const CustomerNavBar: React.FC<CustomerNavBarProps> = ({ email }) => {
   const [session, setSession] = useState<Session | null>(null);
   const router = useRouter();
 
@@ -31,16 +28,19 @@ export const CustomerNavBar: React.FC<CustomerNavBarProps> = ({
       <button className="py-2 text-3xl font-bold text-black">OneClick</button>
       <div className="flex text-sm justify-center items-center">
         {session?.user ? (
-          <button
-            onClick={() =>
-              signOut({
-                redirect: true,
-                callbackUrl: '/',
-              })
-            }
-          >
-            Sign out
-          </button>
+          <div className="flex">
+            <p className="mr-4">{email}</p>
+            <button
+              onClick={() =>
+                signOut({
+                  redirect: true,
+                  callbackUrl: '/',
+                })
+              }
+            >
+              Sign out
+            </button>
+          </div>
         ) : (
           <div>
             <button

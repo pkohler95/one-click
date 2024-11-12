@@ -41,6 +41,7 @@ model Customer {
   stripeCustomerId String? // Store Stripe customer ID
   stripePaymentMethodId String?
   balance      String?
+  transactions          Transaction[] // New relation to Transaction model
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -53,7 +54,20 @@ model Merchant {
   lnurl              String?
   connectedAccountId String?
   oneClickDiscount   Int      @default(2) // New field with default value
+  transactions          Transaction[] // New relation to Transaction model
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }
 
+model Transaction {
+  id            Int      @id @default(autoincrement())
+  customerId    Int      // ID of the customer making the transaction
+  customer      Customer   @relation(fields: [customerId], references: [userId], onDelete: Cascade)
+  merchantId    Int      // ID of the merchant involved in the transaction
+  merchant      Merchant @relation(fields: [merchantId], references: [userId], onDelete: Cascade)
+  amount        Float    // Transaction amount
+  status        String   // Status of the transaction, e.g., 'pending', 'successful', 'failed'
+  errorDetails  String?  // Additional error information if available
+  paymentMethod String?  // Payment method used, e.g., 'stripe', 'coinbase'
+  createdAt     DateTime @default(now()) // Time of transaction
+}

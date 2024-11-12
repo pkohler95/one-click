@@ -8,6 +8,7 @@ import BankDetails from './BankDetails';
 import AddBankDetails from './AddBankDetails';
 import Button from '@/components/shared/Button';
 import { CustomerNavBar } from './CustomerNavBar';
+import TransactionsTable from './TransactionsTable';
 
 interface Customer {
   firstName?: string;
@@ -129,7 +130,7 @@ const CustomerProfileClient = ({ session }: { session: any }) => {
         <div className="flex justify-center flex-grow">
           <div className="w-4/5 mt-8">
             {/* Pass balance and updateBalance to the Navbar */}
-            <CustomerNavBar balance={parseFloat(customer.balance || '0')} />
+            <CustomerNavBar email={session?.user?.email || ''} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-20">
               {/* Left section */}
@@ -162,7 +163,7 @@ const CustomerProfileClient = ({ session }: { session: any }) => {
               </div>
 
               {/* Right section */}
-              <div className="flex">
+              <div className="flex flex-col">
                 <div className="w-full ">
                   {/* Conditionally render BankDetails or AddBankDetails based on stripePaymentMethodId */}
                   {customer.stripePaymentMethodId ? (
@@ -182,6 +183,12 @@ const CustomerProfileClient = ({ session }: { session: any }) => {
                       lastName={customer.lastName || ''}
                     />
                   )}
+                </div>
+                <div className="pt-10">
+                  <h1 className="text-3xl font-bold mb-6 mt-12">
+                    Transactions
+                  </h1>
+                  <TransactionsTable customerId={session?.user?.id} />
                 </div>
               </div>
             </div>
