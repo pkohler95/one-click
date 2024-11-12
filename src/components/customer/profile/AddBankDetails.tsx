@@ -20,6 +20,7 @@ const AddBankDetails = ({
 
   // Function to handle SetupIntent creation
   const handleSetupIntent = async () => {
+    console.log('Starting SetupIntent creation...');
     try {
       const response = await fetch('/api/stripe/create-setup-intent', {
         method: 'POST',
@@ -28,8 +29,10 @@ const AddBankDetails = ({
         },
         body: JSON.stringify({ userId: session.user.id }),
       });
+      console.log('SetupIntent response:', response);
 
       const { clientSecret } = await response.json();
+      console.log('Received clientSecret:', clientSecret);
       return clientSecret;
     } catch (error) {
       console.error('Error creating SetupIntent:', error);
@@ -38,9 +41,16 @@ const AddBankDetails = ({
 
   // Function to handle bank account collection
   const handleCollectBankAccount = async (clientSecret: string) => {
+    console.log('Starting bank account collection...');
     const stripe = await stripePromise;
 
-    if (!stripe || !clientSecret) {
+    if (!stripe) {
+      console.error('Stripe instance not loaded');
+      return;
+    }
+
+    if (!clientSecret) {
+      console.error('Client secret is missing');
       return;
     }
 
@@ -57,22 +67,27 @@ const AddBankDetails = ({
         payment_method_type: 'us_bank_account',
       },
     });
+    console.log('Bank account collection result:', { setupIntent, error });
 
     if (error) {
       console.error('Error collecting bank account:', error);
     } else if (setupIntent) {
       const paymentMethodId = setupIntent.payment_method;
+      console.log('SetupIntent completed. PaymentMethod ID:', paymentMethodId);
 
       // Store the paymentMethodId in your database
-      await fetch('/api/stripe/store-payment-method', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: session.user.id, paymentMethodId }),
-      });
-
-      console.log('Bank account setup complete:', setupIntent);
+      try {
+        const storeResponse = await fetch('/api/stripe/store-payment-method', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: session.user.id, paymentMethodId }),
+        });
+        console.log('Stored payment method response:', storeResponse);
+      } catch (storeError) {
+        console.error('Error storing payment method:', storeError);
+      }
     }
 
     setIsLoading(false);
@@ -80,6 +95,7 @@ const AddBankDetails = ({
 
   // Function to handle the button click
   const handleButtonClick = async () => {
+    console.log('Button clicked, starting SetupIntent and bank collection...');
     setIsLoading(true);
 
     // Step 1: Create SetupIntent
@@ -88,6 +104,8 @@ const AddBankDetails = ({
     if (clientSecret) {
       // Step 2: Collect bank account details using the SetupIntent
       await handleCollectBankAccount(clientSecret);
+    } else {
+      console.error('Failed to obtain clientSecret for SetupIntent');
     }
 
     setIsLoading(false);

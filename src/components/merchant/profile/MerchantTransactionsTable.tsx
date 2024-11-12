@@ -24,10 +24,19 @@ const MerchantTransactionsTable = ({
         const response = await fetch(
           `/api/merchant/${merchantId}/transactions`
         );
-        const data: Transaction[] = await response.json();
-        setTransactions(data);
+        const data = await response.json();
+
+        console.log('Fetched transactions data:', data); // Debug log
+
+        if (Array.isArray(data)) {
+          setTransactions(data);
+        } else {
+          console.error('Expected data to be an array, received:', data);
+          setTransactions([]); // Set to empty array if data is not an array
+        }
       } catch (error) {
         console.error('Error fetching transactions:', error);
+        setTransactions([]); // Set to empty array in case of an error
       } finally {
         setLoading(false);
       }
