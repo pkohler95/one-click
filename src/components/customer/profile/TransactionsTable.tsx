@@ -1,7 +1,19 @@
 import { useEffect, useState } from 'react';
 
-const TransactionsTable = ({ customerId }) => {
-  const [transactions, setTransactions] = useState([]);
+interface Transaction {
+  id: string;
+  createdAt: string;
+  amount: number;
+  status: 'completed' | 'failed' | 'pending';
+  paymentMethod?: string;
+}
+
+interface TransactionsTableProps {
+  customerId: string;
+}
+
+const TransactionsTable = ({ customerId }: TransactionsTableProps) => {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -10,7 +22,7 @@ const TransactionsTable = ({ customerId }) => {
         const response = await fetch(
           `/api/customer/${customerId}/transactions`
         );
-        const data = await response.json();
+        const data: Transaction[] = await response.json();
         setTransactions(data);
       } catch (error) {
         console.error('Error fetching transactions:', error);
