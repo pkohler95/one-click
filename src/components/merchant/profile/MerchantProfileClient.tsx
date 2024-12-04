@@ -6,6 +6,9 @@ import { Navbar } from '@/components/shared/Navbar';
 import Button from '@/components/shared/Button';
 import MerchantForm from './MerchantForm';
 import MerchantTransactionsTable from './MerchantTransactionsTable';
+import APIKey from './APIKeys/GenerateApiKey';
+import GenerateApiKey from './APIKeys/GenerateApiKey';
+import ApiKeyManagement from './APIKeys/ApiKeyManagement';
 
 interface Merchant {
   storeName?: string;
@@ -104,6 +107,11 @@ const MerchantProfileClient = ({ session }: { session: any }) => {
                 <div className="flex justify-center mt-4">
                   <Button text="Save" variant="primary" onClick={saveProfile} />
                 </div>
+
+                <div>API Key</div>
+
+                <GenerateApiKey userId={session.user.id} />
+                <ApiKeyManagement userId={session.user.id} />
               </div>
 
               {/* Right section - Hosted Onboarding/Dashboard Link */}

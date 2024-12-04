@@ -47,16 +47,17 @@ model Customer {
 }
 
 model Merchant {
-  id                 Int      @id @default(autoincrement())
-  userId             Int      @unique
-  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 Int        @id @default(autoincrement())
+  userId             Int        @unique
+  user               User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   storeName          String?
   lnurl              String?
   connectedAccountId String?
-  oneClickDiscount   Int      @default(2) // New field with default value
-  transactions          Transaction[] // New relation to Transaction model
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  oneClickDiscount   Int        @default(2) // New field with default value
+  transactions       Transaction[] // Relation to Transaction model
+  apiKeys            ApiKey[]   // Relation to ApiKey model through userId
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
 }
 
 model Transaction {
@@ -70,4 +71,15 @@ model Transaction {
   errorDetails  String?  // Additional error information if available
   paymentMethod String?  // Payment method used, e.g., 'stripe', 'coinbase'
   createdAt     DateTime @default(now()) // Time of transaction
+}
+
+model ApiKey {
+  id         Int      @id @default(autoincrement())
+  key        String   @unique
+  userId     Int
+  merchant   Merchant @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime?
+  isActive   Boolean  @default(true)
+  scope      String   @default("read") // Temporary default value
 }
